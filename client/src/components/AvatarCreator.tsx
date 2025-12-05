@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { KingAvatar } from "@/components/KingAvatar";
 import { useWallet } from "@/context/WalletContext";
-import { User, Sparkles } from "lucide-react";
+import { User, Sparkles, RefreshCw } from "lucide-react";
 
 export function AvatarCreator() {
   const { userAvatar, updateAvatar, isConnected } = useWallet();
@@ -36,9 +36,18 @@ export function AvatarCreator() {
         
         <div className="flex flex-col items-center space-y-8 py-6">
           {/* Preview */}
-          <div className="relative group w-48 h-48 flex items-center justify-center bg-white/5 rounded-lg overflow-hidden border border-white/10">
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent opacity-50 animate-pulse" />
-            <KingAvatar seed={seed} glow className="w-40" />
+          <div className="relative group w-64 h-64 flex items-center justify-center bg-black rounded-lg overflow-hidden border border-white/10 shadow-inner">
+             {/* Mock background to show transparency */}
+             <div className="absolute inset-0 opacity-30" 
+                  style={{ 
+                    backgroundImage: 'linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%)',
+                    backgroundSize: '20px 20px',
+                    backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
+                  }} 
+             />
+             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
+            
+            <KingAvatar seed={seed} glow className="w-full h-full p-4" />
           </div>
 
           {/* Controls */}
@@ -55,18 +64,19 @@ export function AvatarCreator() {
                   size="icon" 
                   variant="secondary" 
                   onClick={() => setSeed(Math.random().toString(36).substring(7))}
-                  className="shrink-0"
+                  className="shrink-0 hover:animate-spin"
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <RefreshCw className="w-4 h-4" />
                 </Button>
               </div>
-              <p className="text-[10px] text-gray-500 text-center pt-2">
-                Your avatar form changes based on your unique soul seed.
+              <p className="text-[10px] text-gray-500 text-center pt-2 max-w-xs mx-auto">
+                Your wallet address determines your base form and color spectrum. 
+                Try changing the seed to see different variations.
               </p>
             </div>
           </div>
 
-          <Button onClick={handleSave} className="w-full bg-primary text-black font-bold hover:bg-primary/90 uppercase tracking-widest">
+          <Button onClick={handleSave} className="w-full bg-primary text-black font-bold hover:bg-primary/90 uppercase tracking-widest shadow-[0_0_15px_rgba(255,69,0,0.4)] transition-all hover:shadow-[0_0_25px_rgba(255,69,0,0.6)]">
             Burn Identity
           </Button>
         </div>
