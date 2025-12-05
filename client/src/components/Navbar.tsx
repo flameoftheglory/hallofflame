@@ -1,9 +1,13 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { Flame } from "lucide-react";
+import { Flame, Wallet, LogOut } from "lucide-react";
+import { useWallet } from "@/context/WalletContext";
+import { AvatarCreator } from "@/components/AvatarCreator";
+import { Button } from "@/components/ui/button";
 
 export function Navbar() {
   const [location] = useLocation();
+  const { isConnected, connectWallet, disconnectWallet, walletAddress } = useWallet();
 
   const NavLink = ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => {
     const isActive = location === href;
@@ -36,10 +40,32 @@ export function Navbar() {
         </Link>
       </div>
       
-      <div className="w-1/3 flex justify-end">
-        <button className="px-4 py-2 bg-primary/10 border border-primary/50 text-primary hover:bg-primary hover:text-white transition-all duration-300 rounded-sm font-mono text-xs md:text-sm uppercase tracking-widest shadow-[0_0_10px_rgba(255,69,0,0.2)] hover:shadow-[0_0_20px_rgba(255,69,0,0.6)] cursor-not-allowed opacity-80">
-          Connect Wallet
-        </button>
+      <div className="w-1/3 flex justify-end items-center gap-4">
+        {isConnected ? (
+          <div className="flex items-center gap-3">
+            <AvatarCreator />
+            <div className="hidden md:flex flex-col items-end">
+              <span className="text-xs text-gray-400 font-mono">Connected</span>
+              <span className="text-xs text-primary font-mono font-bold">{walletAddress}</span>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={disconnectWallet}
+              className="text-gray-400 hover:text-white hover:bg-white/10"
+            >
+              <LogOut className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : (
+          <button 
+            onClick={connectWallet}
+            className="px-4 py-2 bg-primary/10 border border-primary/50 text-primary hover:bg-primary hover:text-white transition-all duration-300 rounded-sm font-mono text-xs md:text-sm uppercase tracking-widest shadow-[0_0_10px_rgba(255,69,0,0.2)] hover:shadow-[0_0_20px_rgba(255,69,0,0.6)] flex items-center gap-2"
+          >
+            <Wallet className="w-4 h-4" />
+            Connect Wallet
+          </button>
+        )}
       </div>
     </nav>
   );
