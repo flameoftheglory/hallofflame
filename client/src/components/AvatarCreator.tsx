@@ -3,9 +3,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Avatar } from "@/components/Avatar";
+import { KingAvatar } from "@/components/KingAvatar";
 import { useWallet } from "@/context/WalletContext";
-import { Palette, User, Sparkles } from "lucide-react";
+import { User, Sparkles } from "lucide-react";
 
 export function AvatarCreator() {
   const { userAvatar, updateAvatar, isConnected } = useWallet();
@@ -36,9 +36,9 @@ export function AvatarCreator() {
         
         <div className="flex flex-col items-center space-y-8 py-6">
           {/* Preview */}
-          <div className="relative group">
-            <div className="absolute -inset-4 bg-gradient-to-r from-primary via-purple-500 to-primary opacity-30 blur-xl rounded-full animate-pulse" />
-            <Avatar seed={seed} size={120} glow className="border-4 border-primary" />
+          <div className="relative group w-48 h-48 flex items-center justify-center bg-white/5 rounded-lg overflow-hidden border border-white/10">
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent opacity-50 animate-pulse" />
+            <KingAvatar seed={seed} glow className="w-40" />
           </div>
 
           {/* Controls */}
@@ -49,7 +49,7 @@ export function AvatarCreator() {
                 <Input 
                   value={seed} 
                   onChange={(e) => setSeed(e.target.value)}
-                  className="bg-white/5 border-white/10 font-mono text-center"
+                  className="bg-white/5 border-white/10 font-mono text-center text-white"
                 />
                 <Button 
                   size="icon" 
@@ -60,6 +60,9 @@ export function AvatarCreator() {
                   <Sparkles className="w-4 h-4" />
                 </Button>
               </div>
+              <p className="text-[10px] text-gray-500 text-center pt-2">
+                Your avatar form changes based on your unique soul seed.
+              </p>
             </div>
           </div>
 
