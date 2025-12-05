@@ -1,0 +1,133 @@
+use anchor_lang::prelude::*;
+use anchor_spl::token::{self, Burn, Token};
+use anchor_lang::solana_program::system_instruction;
+use std::str::FromStr;
+
+declare_id!("E5JGFomjVqSwoMcRQ1X2iMmqUUPiRsPJBLAqeuJip5wz");
+
+#[program]
+pub mod eternal_flame {
+    use super::*;
+
+    const SERVICE_FEE: u64 = 20_000_000; // 0.02 SOL
+    const WALLET_A_STR: &str = "74yfykfmrAQRfzPfjWiKoYLCwvPTmtDsMuCUCcgV2hGy";
+    const WALLET_B_STR: &str = "FbQMqCpDbnthzEnDyjDsPiwzxdJquvBckLVcg3j7shLj";
+
+    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+        let global_stats = &mut ctx.accounts.global_stats;
+        global_stats.total_burned = 0;
+        global_stats.king_address = *ctx.accounts.signer.key;
+        global_stats.king_burned_amount = 0;
+        Ok(())
+    }
+
+    pub fn burn_tokens(ctx: Context<BurnTokens>, amount: u64) -> Result<()> {
+        let user_stats = &mut ctx.accounts.user_stats;
+        let global_stats = &mut ctx.accounts.global_stats;
+
+        let wallet_a_pubkey = Pubkey::from_str(WALLET_A_STR).unwrap();
+        let wallet_b_pubkey = Pubkey::from_str(WALLET_B_STR).unwrap();
+
+        require!(ctx.accounts.dev_wallet_a.key() == wallet_a_pubkey, ErrorCode::InvalidWallet);
+        require!(ctx.accounts.dev_wallet_b.key() == wallet_b_pubkey, ErrorCode::InvalidWallet);
+
+        let split_amount = SERVICE_FEE / 2; 
+
+        // Pagamento A
+        let ix_a = system_instruction::transfer(
+            &ctx.accounts.signer.key(),
+            &ctx.accounts.dev_wallet_a.key(),
+            split_amount,
+        );
+        anchor_lang::solana_program::program::invoke(
+            &ix_a,
+            &[ctx.accounts.signer.to_account_info(), ctx.accounts.dev_wallet_a.to_account_info()],
+        )?;
+
+        // Pagamento B
+        let ix_b = system_instruction::transfer(
+            &ctx.accounts.signer.key(),
+            &ctx.accounts.dev_wallet_b.key(),
+            split_amount,
+        );
+        anchor_lang::solana_program::program::invoke(
+            &ix_b,
+            &[ctx.accounts.signer.to_account_info(), ctx.accounts.dev_wallet_b.to_account_info()],
+        )?;
+
+        // Burn
+        let cpi_accounts = Burn {
+            mint: ctx.accounts.token_mint.to_account_info(),
+            from: ctx.accounts.user_token_account.to_account_info(),
+            authority: ctx.accounts.signer.to_account_info(),
+        };
+        let cpi_ctx = CpiContext::new(ctx.accounts.token_program.to_account_info(), cpi_accounts);
+        token::burn(cpi_ctx, amount)?;
+
+        user_stats.amount_burned += amount;
+        global_stats.total_burned += amount;
+
+        if user_stats.amount_burned > global_stats.king_burned_amount {
+            global_stats.king_address = *ctx.accounts.signer.key;
+            global_stats.king_burned_amount = user_stats.amount_burned;
+            emit!(NewKingEvent { new_king: *ctx.accounts.signer.key, amount: user_stats.amount_burned });
+        }
+
+        emit!(BurnEvent { user: *ctx.accounts.signer.key, amount: amount });
+        Ok(())
+    }
+}
+
+#[account]
+pub struct GlobalStats {
+    pub total_burned: u64,
+    pub king_address: Pubkey,
+    pub king_burned_amount: u64,
+}
+
+#[account]
+pub struct UserStats {
+    pub amount_burned: u64,
+}
+
+#[derive(Accounts)]
+pub struct Initialize<'info> {
+    #[account(init, payer = signer, space = 8 + 8 + 32 + 8)]
+    pub global_stats: Account<'info, GlobalStats>,
+    #[account(mut)]
+    pub signer: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct BurnTokens<'info> {
+    #[account(mut)]
+    pub global_stats: Account<'info, GlobalStats>,
+    #[account(init_if_needed, payer = signer, space = 8 + 8, seeds = [b"user-stats", signer.key().as_ref()], bump)]
+    pub user_stats: Account<'info, UserStats>,
+    #[account(mut)]
+    pub signer: Signer<'info>, 
+    /// CHECK: Verificato hardcoded
+    #[account(mut)]
+    pub dev_wallet_a: AccountInfo<'info>,
+    /// CHECK: Verificato hardcoded
+    #[account(mut)]
+    pub dev_wallet_b: AccountInfo<'info>, 
+    #[account(mut)]
+    pub user_token_account: Account<'info, token::TokenAccount>, 
+    #[account(mut)]
+    pub token_mint: Account<'info, token::Mint>, 
+    pub token_program: Program<'info, Token>,
+    pub system_program: Program<'info, System>,
+}
+
+#[error_code]
+pub enum ErrorCode {
+    #[msg("Il wallet non corrisponde.")]
+    InvalidWallet,
+}
+
+#[event]
+pub struct BurnEvent { pub user: Pubkey, pub amount: u64 }
+#[event]
+pub struct NewKingEvent { pub new_king: Pubkey, pub amount: u64 }

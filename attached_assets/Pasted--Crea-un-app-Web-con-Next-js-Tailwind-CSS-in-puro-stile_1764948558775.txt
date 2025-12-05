@@ -1,0 +1,62 @@
+🛠️ Crea un'app Web con Next.js + Tailwind CSS in puro stile dark/crypto "Solana infernale". Il progetto si chiama **Hall of Flame 🔥**. Ti spiego esattamente tutto:
+
+---
+
+👑 **1. Homepage (/)**
+
+- Fullscreen, scura, lava/fiamme animate (anche con GIF o video loop o CSS).
+- Mostra il **"Current King"** (l'utente che ha bruciato più token) seduto al centro su un **trono infuocato**, stile lo screen allegato (immagine 1), ma con **estetica Solana/digital/neon**.
+- Mostra il suo avatar (vedi punto 3).
+- Sotto, il suo indirizzo wallet e quantità bruciata.
+- Semplice ma d'impatto. L'attenzione è tutta sul "Re".
+- Navbar in alto: “LEADERBOARD” | “HALL OF FLAME 🔥” (centrato) | “BURN” (a destra).
+
+---
+
+🔥 **2. Pagina /leaderboard**
+
+- Rappresenta **una scala infernale** in discesa (stile immagine 2), ma più tech/dark/Solana.
+- Sulla scala, posizionati **gli avatar degli utenti** (da 2° a 10° posto) in ordine di burn.
+- Ogni avatar ha sotto l’address abbreviato e la quantità bruciata.
+- Se possibile, effetto di **fiamme animate in background** o lava che scorre dietro.
+- Sotto, una tabella con tutti gli altri utenti e la loro posizione in classifica.
+
+---
+
+🔥 **3. Avatar**
+
+- Ogni utente ha un avatar.
+- Per ora puoi usare Dicebear o simile (installalo tu), poi lo sostituiamo con design personalizzati.
+- L’avatar viene generato da una `seed` (es: indirizzo wallet).
+- Aggiungi una funzione `Avatar` che prende `seed`, `size`, `className`.
+
+---
+
+⚙️ **4. Stile & Tecnologie**
+
+- Usa **Tailwind CSS** in modalità dark.
+- Look cyber/dark, ispirato a **Solana, crypto, fiamme, toni neri/viola/arancioni**.
+- Se puoi, usa GIF/MP4/CSS animation per fiamme.
+- Layout responsive.
+- Se ti servono dati fake per leaderboard/king, generali tu in un file `data.ts`.
+
+---
+
+📄 **5. File/Pagine attese:**
+
+- `/pages/index.tsx` → Homepage con King sul trono
+- `/pages/leaderboard.tsx` → Scala infernale + classifica
+- `/components/Avatar.tsx` → Componente avatar generato da `seed`
+- `/data.ts` → Mock dati utenti (top 10 e altri)
+- Tailwind setup completo (postcss, config, globals.css)
+
+---
+
+👤 **6. Futuro (non farlo ora):**
+
+- Ogni utente potrà creare/modificare il proprio avatar con stile unico (interfaccia da progettare).
+- Sarà connesso a wallet Solana (Phantom), con possibilità di burn.
+
+---
+
+Crea tutta la parte grafica e mock con dati finti. Focus sulla resa visuale 🔥
