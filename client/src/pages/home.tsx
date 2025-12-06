@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { getKing } from "@/lib/mockData";
 import { Navbar } from "@/components/Navbar";
-import throneImage from "@assets/generated_images/infernal_geometric_throne.png";
+import throneImage from "@assets/generated_images/4k_wide_shot_infernal_throne.png";
 
 export default function Home() {
   const king = useMemo(() => getKing(), []);
@@ -13,11 +13,16 @@ export default function Home() {
     <div className="min-h-screen w-full relative overflow-hidden bg-black text-white">
       <Navbar />
       
-      {/* Background Image - The "Third Photo" Style Throne */}
+      {/* Background Image - Ultra High Def Wide Shot Throne */}
       <div className="fixed inset-0 z-0 w-full h-full">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105"
-          style={{ backgroundImage: `url(${throneImage})` }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: `url(${throneImage})`,
+            // Slight scale down or normal scale to show the "wide" perspective naturally
+            // The image itself is wide, so bg-cover handles it well. 
+            // We avoid zooming in (scale > 1) to keep it "further back".
+          }}
         />
         {/* Vignette to darken edges and focus attention on center */}
         <div className="absolute inset-0 bg-radial-[circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%]" />
