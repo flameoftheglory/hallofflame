@@ -2,8 +2,7 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { getKing } from "@/lib/mockData";
 import { Navbar } from "@/components/Navbar";
-import { KingAvatar } from "@/components/KingAvatar";
-import lavaThroneVideo from "@assets/lava_throne_background.mp4";
+import throneImage from "@assets/generated_images/infernal_geometric_throne.png";
 
 export default function Home() {
   const king = useMemo(() => getKing(), []);
@@ -14,20 +13,14 @@ export default function Home() {
     <div className="min-h-screen w-full relative overflow-hidden bg-black text-white">
       <Navbar />
       
-      {/* Fullscreen Video Background */}
-      <div className="fixed inset-0 z-0 w-full h-full overflow-hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          // Added transform scale to zoom out (make things look smaller/further away)
-          className="w-full h-full object-cover opacity-100 transform scale-75"
-        >
-          <source src={lavaThroneVideo} type="video/mp4" />
-        </video>
+      {/* Background Image - The "Third Photo" Style Throne */}
+      <div className="fixed inset-0 z-0 w-full h-full">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105"
+          style={{ backgroundImage: `url(${throneImage})` }}
+        />
         {/* Vignette to darken edges and focus attention on center */}
-        <div className="absolute inset-0 bg-radial-[circle_at_center,transparent_20%,rgba(0,0,0,0.9)_100%]" />
+        <div className="absolute inset-0 bg-radial-[circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%]" />
       </div>
 
       <main className="min-h-screen flex flex-col items-center justify-center relative z-10">
@@ -45,34 +38,10 @@ export default function Home() {
           </h1>
         </motion.div>
 
-        {/* The Avatar Sitting on the "Video" Throne */}
+        {/* Empty Throne Centerpiece - No Avatar for now */}
         <div className="relative w-full h-screen flex items-center justify-center pointer-events-none">
-            
-          {/* King Avatar Container */}
-          {/* REDUCED SIZE: w-[220px] md:w-[350px] (was 280/450) */}
-          <motion.div 
-            className="absolute top-[38%] md:top-[35%] w-[220px] md:w-[350px]" 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-          >
-            <KingAvatar 
-              seed={king.address} 
-              glow 
-              className="w-full"
-            />
-            
-            {/* Floating Crown */}
-            <motion.div 
-              className="absolute -top-[22%] left-1/2 -translate-x-1/2 text-5xl md:text-6xl filter drop-shadow-[0_0_20px_gold] z-30"
-              animate={{ y: [0, -15, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            >
-              👑
-            </motion.div>
-          </motion.div>
-
-          {/* King Stats Card */}
+          
+          {/* King Stats Card - Floating near bottom */}
           <motion.div 
             className="absolute bottom-8 md:bottom-16 pointer-events-auto"
             initial={{ opacity: 0, y: 20 }}
