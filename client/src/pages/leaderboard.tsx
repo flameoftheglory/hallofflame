@@ -5,7 +5,7 @@ import { FlameBackground } from "@/components/FlameBackground";
 import { Navbar } from "@/components/Navbar";
 import { Avatar } from "@/components/Avatar";
 import { cn } from "@/lib/utils";
-import staircaseImg from "@assets/generated_images/infernal_digital_staircase.png";
+import staircaseImg from "@assets/generated_images/4k_infernal_staircase.png";
 
 export default function Leaderboard() {
   const allUsers = useMemo(() => getLeaderboard(), []);
